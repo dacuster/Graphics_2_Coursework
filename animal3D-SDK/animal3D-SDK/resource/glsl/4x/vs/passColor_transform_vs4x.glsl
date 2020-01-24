@@ -50,7 +50,7 @@ layout (location = 3) in vec4 aColor;
 	Use layout position 3 for color data.
 	Layout is needed for output as well.
 */
-layout (location = 3) out vec4 vColor;
+out vec4 vColor;
 
 void main()
 {

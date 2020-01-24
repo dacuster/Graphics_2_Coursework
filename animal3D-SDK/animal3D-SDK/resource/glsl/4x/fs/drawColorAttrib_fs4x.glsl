@@ -34,10 +34,10 @@ out vec4 rtFragColor;
 	Attribute input variable for color.
 	Use layout position 3 for color data.
 */
-layout (location = 3) in vec4 aColor;
+in vec4 vColor;
 
 void main()
 {
 	// Set the fragment shader color to the input color.
-	rtFragColor = aColor;
+	rtFragColor = vColor;
 }
