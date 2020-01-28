@@ -32,8 +32,17 @@
 
 out vec4 rtFragColor;
 
+uniform sampler2D uTex_dm;
+
+in vec4 vTexcoord;;
+
 void main()
 {
 	// DUMMY OUTPUT: all fragments are OPAQUE WHITE
 	rtFragColor = vec4(1.0, 1.0, 1.0, 1.0);
+
+	//rtFragColor = texture(uTexture_dm, vTexcoord);
+
+	//DEBUGGING:
+	rtFragColor = vTexcoord;
 }
