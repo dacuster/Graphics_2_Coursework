@@ -38,7 +38,7 @@ layout (location = 0) in vec4 aPosition;
 // ***NOTE*** Attributes always have a vec4 allocation.
 
 // Attribute input texure coordinate.
-layout (location = 8) in vec4 aTextureCoordinate;
+layout (location = 8) in vec4 aTexcoord;
 
 // Model View Projection matrix.
 uniform mat4 uMVP;
@@ -46,7 +46,7 @@ uniform mat4 uMVP;
 uniform mat4 uAtlas;
 
 // Varying output texture coordinate.
-out vec4 vTextureCoordinate;
+out vec4 vTexcoord;
 
 
 void main()
@@ -57,8 +57,8 @@ void main()
 	// Assign input position modified by MVP to output position.
 	gl_Position = uMVP * aPosition;
 
-	//vTextureCoordinate = vec2(uAtlas * aTextureCoordinate);
-	vTextureCoordinate = uAtlas * aTextureCoordinate;
+	//vTexcoord = vec2(uAtlas * aTexcoord);
+	vTexcoord = uAtlas * aTexcoord;
 
 
 }
