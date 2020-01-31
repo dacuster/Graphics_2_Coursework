@@ -25,16 +25,45 @@
 #version 410
 
 // ****TO-DO: 
-//	1) declare uniform variable for texture; see demo code for hints
-//	2) declare uniform variables for lights; see demo code for hints
+//	--1) declare uniform variable for texture; see demo code for hints
+//	--2) declare uniform variables for lights; see demo code for hints
 //	3) declare inbound varying data
 //	4) implement Lambert shading model
 //	Note: test all data and inbound values before using them!
 
 out vec4 rtFragColor;
 
+// Texture matrix.
+uniform mat4 uTex_dm;
+
+// Light source count.
+uniform vec4 uLightCt;
+
+// Light size.
+uniform vec4 uLightSz;
+
+// Light size inverse squared.
+uniform vec4 uLightSzInvSq;
+
+// Light position.
+uniform vec4 uLightPos;
+
+// Light color.
+uniform vec4 uLightCol;
+
 void main()
 {
 	// DUMMY OUTPUT: all fragments are OPAQUE RED
 	rtFragColor = vec4(1.0, 0.0, 0.0, 1.0);
+
+	// DEBUGGING:
+	rtFragColor = uLightCol;
+	rtFragColor = lambert(uNormal, ) * uLightColor;
+
+}
+
+
+float lambert(vec3 _normal, vec3 _light)
+{
+	return dot(_normal, _light);
 }

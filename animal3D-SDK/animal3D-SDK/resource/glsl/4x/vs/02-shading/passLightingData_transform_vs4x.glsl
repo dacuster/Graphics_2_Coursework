@@ -86,7 +86,7 @@ void main()
 	vViewPosition = uMV * aPosition;
 
 	// 5) Transform view position by projection matrix.
-	gl_Position = uP * vViewPosition;
+	vViewPosition = uP * vViewPosition;
 
 	// 9) Transform input normal by MV normal matrix.
 	vNormal = uMV_nrm * aNormal;
@@ -96,4 +96,6 @@ void main()
 
 	// DUMMY OUTPUT: directly assign input position to output position
 	//gl_Position = aPosition;
+
+	gl_Position = vViewPosition;
 }
