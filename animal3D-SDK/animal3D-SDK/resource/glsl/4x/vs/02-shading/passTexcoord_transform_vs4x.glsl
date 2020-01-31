@@ -37,12 +37,13 @@ layout (location = 0) in vec4 aPosition;
 
 // ***NOTE*** Attributes always have a vec4 allocation.
 
-// Attribute input texure coordinate.
+// Attribute input texture coordinate.
 layout (location = 8) in vec4 aTexcoord;
 
 // Model View Projection matrix.
 uniform mat4 uMVP;
 
+// Texture Atlas matrix.
 uniform mat4 uAtlas;
 
 // Varying output texture coordinate.
