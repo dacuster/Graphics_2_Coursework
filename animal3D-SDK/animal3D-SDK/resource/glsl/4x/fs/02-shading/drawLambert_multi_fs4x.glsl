@@ -31,19 +31,21 @@
 //	4) implement Lambert shading model
 //	Note: test all data and inbound values before using them!
 
+float lambert(vec4 _normal, vec4 _light);
+
 out vec4 rtFragColor;
 
 // Texture matrix.
-uniform mat4 uTex_dm;
+uniform sampler2D uTex_dm;
 
 // Light source count.
-uniform vec4 uLightCt;
+uniform int uLightCt;
 
 // Light size.
-uniform vec4 uLightSz;
+uniform float uLightSz;
 
 // Light size inverse squared.
-uniform vec4 uLightSzInvSq;
+uniform float uLightSzInvSq;
 
 // Light position.
 uniform vec4 uLightPos;
@@ -51,19 +53,45 @@ uniform vec4 uLightPos;
 // Light color.
 uniform vec4 uLightCol;
 
+// Inbound varying for texture coordinate.
+in vec4 vTexcoord;
+
+in vec4 vViewPosition;
+
+in vec4 vNormal;
+
 void main()
 {
 	// DUMMY OUTPUT: all fragments are OPAQUE RED
-	rtFragColor = vec4(1.0, 0.0, 0.0, 1.0);
+	//rtFragColor = vec4(1.0, 0.0, 0.0, 1.0);
 
 	// DEBUGGING:
 	rtFragColor = uLightCol;
-	rtFragColor = lambert(uNormal, ) * uLightColor;
+	
+	// Sample texture using texture coordinate and assign to output color.
+	vec4 normalizedView = normalize(uLightPos);
+
+	float finalLambert = 0.0;
+
+	for (int count = 0; count < uLightCt; count++)
+	{
+		finalLambert += uLightCol[count] * lambert(vNormal, vTexcoord);
+	}
+
+	rtFragColor = texture(uTex_dm, vec2(vTexcoord)) * finalLambert;
+	//rtFragColor = lambert(uNormal, ) * uLightColor;
 
 }
 
 
-float lambert(vec3 _normal, vec3 _light)
+float lambert(vec4 _normal, vec4 _light)
 {
-	return dot(_normal, _light);
+	// Surface normal.
+	vec4 surfaceNormal = normalize(_normal);
+
+	// Noralized light.
+	vec4 lightNormal = normalize(_light);
+
+	return max(0.0, dot(surfaceNormal, lightNormal));
 }
+
