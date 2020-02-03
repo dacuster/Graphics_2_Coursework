@@ -42,6 +42,7 @@
 /*************
 **	INPUTS  **
 *************/
+// Inbound position.
 layout (location = 0) in vec4 aPosition;
 
 // 6) Declare normal inbound attribute.
@@ -86,18 +87,14 @@ void main()
 	vViewPosition = uMV * aPosition;
 
 	// 5) Transform view position by projection matrix.
-	vViewPosition = uP * vViewPosition;
+	//vViewPosition = uP * vViewPosition;
 
 	// 9) Transform input normal by MV normal matrix.
 	vNormal = uMV_nrm * aNormal;
 
-	//vTexcoord = vec2(uAtlas * aTexcoord);
+	// Apply inbound texture coordinate and object atlas to texture coordinate outbound.
 	vTexcoord = uAtlas * aTexcoord;
 
-	// DUMMY OUTPUT: directly assign input position to output position
-	//gl_Position = aPosition;
-
-	gl_Position = vViewPosition;
-	
-	//vViewPosition = uMV * aPosition;
+	// Move view position into clip space and assign it to output position.
+	gl_Position = uP * vViewPosition;
 }
