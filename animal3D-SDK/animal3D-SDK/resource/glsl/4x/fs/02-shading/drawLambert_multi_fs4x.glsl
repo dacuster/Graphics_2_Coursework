@@ -71,14 +71,15 @@ void main()
 	// Sample texture using texture coordinate and assign to output color.
 	vec4 normalizedView = normalize(uLightPos);
 
-	float finalLambert = 0.0;
+	vec4 finalLambert;
+
 
 	for (int count = 0; count < uLightCt; count++)
 	{
-		finalLambert += uLightCol[count] * lambert(vNormal, vTexcoord);
+		finalLambert += (lambert(vNormal, vViewPosition - uLightPos));
 	}
 
-	rtFragColor = texture(uTex_dm, vec2(vTexcoord)) * finalLambert;
+	rtFragColor = texture(uTex_dm, vec2(vTexcoord)) * finalLambert * uLightCol;
 	//rtFragColor = lambert(uNormal, ) * uLightColor;
 
 }
@@ -92,6 +93,6 @@ float lambert(vec4 _normal, vec4 _light)
 	// Noralized light.
 	vec4 lightNormal = normalize(_light);
 
-	return max(0.0, dot(surfaceNormal, lightNormal));
+	return max(0.0, dot(lightNormal, surfaceNormal));
 }
 
