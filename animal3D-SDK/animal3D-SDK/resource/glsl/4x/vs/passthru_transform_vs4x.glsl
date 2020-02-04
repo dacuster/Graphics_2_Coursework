@@ -24,14 +24,20 @@
 
 #version 410
 
-// ****TO-DO: 
 //	1) declare uniform variable for MVP matrix; see demo code for hint
 //	2) correctly transform input position by MVP matrix
 
+/*
+	Attribute input variable for position.
+	Use layout location 0 for position data.
+*/
 layout (location = 0) in vec4 aPosition;
+
+// Uniform variable for Model View Projection Matrix.
+uniform mat4 uMVP;
 
 void main()
 {
-	// DUMMY OUTPUT: directly assign input position to output position
-	gl_Position = aPosition;
+	// Transform the input position by the MVP matrix and assign it to the output position.
+	gl_Position = uMVP * aPosition;
 }

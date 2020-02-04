@@ -24,17 +24,39 @@
 
 #version 410
 
-// ****TO-DO: 
 //	1) declare uniform variable for MVP matrix; see demo code for hint
 //	2) correctly transform input position by MVP matrix
 //	3) declare attribute for vertex color input
 //	4) declare varying to pass color input to fragment shader
 //	5) assign vertex color input to varying
 
+/*
+	Attribute input variable for position.
+	Use layout location 0 for position data.
+*/
 layout (location = 0) in vec4 aPosition;
+
+// Uniform variable for Model View Projection Matrix.
+uniform mat4 uMVP;
+
+/*
+	Attribute input variable for color.
+	Use layout position 3 for color data.
+*/
+layout (location = 3) in vec4 aColor;
+
+/*
+	Varying output variable for color.
+	Use layout position 3 for color data.
+	Layout is needed for output as well.
+*/
+out vec4 vColor;
 
 void main()
 {
-	// DUMMY OUTPUT: directly assign input position to output position
-	gl_Position = aPosition;
+	// Transform the input position by the MVP matrix and assign it to the output position.
+	gl_Position = uMVP * aPosition;
+	
+	// Set the varying color to the vertex color value.
+	vColor = aColor;
 }
