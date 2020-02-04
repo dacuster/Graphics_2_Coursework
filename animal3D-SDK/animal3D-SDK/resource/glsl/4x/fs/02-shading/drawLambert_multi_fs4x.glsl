@@ -82,15 +82,12 @@ void main()
 {
 	// Final diffuse.
 	vec4 finalDiffuse = vec4(0.0, 0.0, 0.0, 0.0);
-
-	// Empty light vector.
-	vec4 lightVector = vec4(0.0, 0.0, 0.0, 0.0);
 	
 	// Loop through all the colors in the scene.
 	for (int count = 0; count < uLightCt; count++)
 	{
 		// Light vector. pL - p
-		lightVector = uLightPos[count] - vViewPosition;
+		vec4 lightVector = uLightPos[count] - vViewPosition;
 
 		// Sum up all light diffuse values and scale by light color.
 		finalDiffuse += diffuse(vNormal, lightVector) * uLightCol[count];
