@@ -83,11 +83,7 @@ out vec4 vTexcoord;
 void main()
 {
 	// 3) Transform input position by model view matrix.
-	//gl_Position = uP * uMV * aPosition;
 	vViewPosition = uMV * aPosition;
-
-	// 5) Transform view position by projection matrix.
-	//vViewPosition = uP * vViewPosition;
 
 	// 9) Transform input normal by MV normal matrix.
 	vNormal = uMV_nrm * aNormal;
