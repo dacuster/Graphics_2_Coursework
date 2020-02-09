@@ -35,9 +35,8 @@
 //	--7) declare MV matrix for normals; see demo code for hint
 //	--8) declare outbound normal
 //	--9) correctly transform input normal by MV normal matrix
-//	10+) see instructions in passTexcoord...vs4x.glsl for information on 
+//	--10+) see instructions in passTexcoord...vs4x.glsl for information on 
 //		how to handle the texture coordinate
-
 
 /*************
 **	INPUTS  **

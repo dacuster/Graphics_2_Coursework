@@ -35,8 +35,6 @@
 
 layout (location = 0) in vec4 aPosition;
 
-// ***NOTE*** Attributes always have a vec4 allocation.
-
 // Attribute input texture coordinate.
 layout (location = 8) in vec4 aTexcoord;
 
@@ -60,6 +58,4 @@ void main()
 
 	//vTexcoord = vec2(uAtlas * aTexcoord);
 	vTexcoord = uAtlas * aTexcoord;
-
-
 }

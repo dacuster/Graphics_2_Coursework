@@ -18,8 +18,8 @@
 	animal3D SDK: Minimal 3D Animation Framework
 	By Daniel S. Buckstein
 	
-	drawPhong_multi_fs4x.glsl
-	Draw Phong shading model for multiple lights.
+	drawPhong_multi_mrt_fs4x.glsl
+	Draw Phong shading model for multiple lights with MRT output.
 */
 
 #version 410
@@ -45,11 +45,17 @@ float specular(vec4 _viewDirection, vec4 _reflectionDirection, float _specularSt
 vec4 ambient(vec4 _lightColor, float _ambientStrength = 0.01);
 
 
-/**************
-**	OUTPUTS  **
-**************/
-// Output fragment color.
-out vec4 rtFragColor;
+/*************************************
+**  OUTPUT MULTI-RENDERING TARGETS  **
+*************************************/
+layout (location = 0) out vec4 rtFragColor;
+layout (location = 1) out vec4 rtViewPosition;
+layout (location = 2) out vec4 rtViewNormal;
+layout (location = 3) out vec4 rtTexcoord;
+layout (location = 4) out vec4 rtDiffuseMap;
+layout (location = 5) out vec4 rtSpecularMap;
+layout (location = 6) out vec4 rtDiffuseTotal;
+layout (location = 7) out vec4 rtSpecularTotal;
 
 
 /***************
@@ -126,6 +132,20 @@ void main()
 	// Assign texture and diffuse to outbound fragment color.
 	// Diffuse_map * finalDiffuse + ambient + Specular_map * finalSpecular
 	rtFragColor = texture(uTex_dm, vec2(vTexcoord)) * finalDiffuse + finalAmbient + texture(uTex_sm, vec2(vTexcoord)) * finalSpecular;
+
+	rtViewPosition = vViewPosition;
+
+	rtViewNormal = vec4(normalize(vNormal).xyz * 0.5 + 0.5, 1.0);
+
+	rtTexcoord = vTexcoord;
+
+	rtDiffuseMap = texture(uTex_dm, vec2(vTexcoord));
+
+	rtSpecularMap = texture(uTex_sm, vec2(vTexcoord));
+
+	rtDiffuseTotal = vec4(finalDiffuse.xyz, 1.0);
+
+	rtSpecularTotal = vec4(finalSpecular.xyz, 1.0);
 }
 
 // Calculate diffuse value of given light and surface normal.

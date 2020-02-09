@@ -35,28 +35,16 @@
 	Use layout location 0 for position data.
 */
 layout (location = 0) in vec4 aPosition;
-
-// Uniform variable for Model View Projection Matrix.
-uniform mat4 uMVP;
-
-/*
-	Attribute input variable for color.
-	Use layout position 3 for color data.
-*/
 layout (location = 3) in vec4 aColor;
 
-/*
-	Varying output variable for color.
-	Use layout position 3 for color data.
-	Layout is needed for output as well.
-*/
+uniform mat4 uMVP;
+
 out vec4 vColor;
 
 void main()
 {
-	// Transform the input position by the MVP matrix and assign it to the output position.
+	// DUMMY OUTPUT: directly assign input position to output position
 	gl_Position = uMVP * aPosition;
-	
-	// Set the varying color to the vertex color value.
+
 	vColor = aColor;
 }

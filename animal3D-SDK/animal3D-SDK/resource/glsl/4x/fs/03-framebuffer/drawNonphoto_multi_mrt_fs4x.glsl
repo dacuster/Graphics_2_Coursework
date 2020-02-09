@@ -18,25 +18,25 @@
 	animal3D SDK: Minimal 3D Animation Framework
 	By Daniel S. Buckstein
 	
-	passthru_transform_vs4x.glsl
-	Pass-thru GLSL vertex shader. Outputs transformed position attribute.
+	drawNonphoto_multi_mrt_fs4x.glsl
+	Draw nonphotorealistic shading model for multiple lights with MRT output.
 */
 
 #version 410
 
-//	--1) declare uniform variable for MVP matrix; see demo code for hint
-//	--2) correctly transform input position by MVP matrix
+// ****TO-DO: 
+//	1) declare uniform variables for textures; see demo code for hints
+//	2) declare uniform variables for lights; see demo code for hints
+//	3) declare inbound varying data
+//	4) implement nonphotorealistic shading model
+//	Note: test all data and inbound values before using them!
+//	5) set location of final color render target (location 0)
+//	6) declare render targets for each attribute and shading component
 
-/*
-	Attribute input variable for position.
-	Use layout location 0 for position data.
-*/
-layout (location = 0) in vec4 aPosition;
-
-uniform mat4 uMVP;
+out vec4 rtFragColor;
 
 void main()
 {
-	// DUMMY OUTPUT: directly assign input position to output position
-	gl_Position = uMVP * aPosition;
+	// DUMMY OUTPUT: all fragments are OPAQUE BLUE
+	rtFragColor = vec4(0.0, 0.0, 1.0, 1.0);
 }
