@@ -27,15 +27,72 @@
 #version 410
 
 // ****TO-DO: 
-//	0) copy previous lighting data vertex shader
-//	1) declare MVPB matrix for light
-//	2) declare varying for shadow coordinate
-//	3) calculate and pass shadow coordinate
+//	--0) copy previous lighting data vertex shader
+//	--1) declare MVPB matrix for light
+//	--2) declare varying for shadow coordinate
+//	--3) calculate and pass shadow coordinate
 
+/*************
+**	INPUTS  **
+*************/
+// Inbound position.
 layout (location = 0) in vec4 aPosition;
+
+// 6) Declare normal inbound attribute.
+layout (location = 2) in vec4 aNormal;
+
+// Attribute input texture coordinate.
+layout (location = 8) in vec4 aTexcoord;
+
+
+/***************
+**	UNIFORMS  **
+***************/
+// 7) Model view matrix for normals.
+uniform mat4 uMV_nrm;
+
+// 1) Model view matrix.
+uniform mat4 uMV;
+
+// 4) Projection matrix.
+uniform mat4 uP;
+
+// Texture Atlas matrix.
+uniform mat4 uAtlas;
+
+// Uniform Model View Projection Bias for light.
+uniform mat4 uMVPB_other;
+
+
+/***************
+**	VARYINGS  **
+***************/
+// 2) Outbound view position.
+out vec4 vViewPosition;
+
+// 8) Outbound normal.
+out vec4 vNormal;
+
+// Varying output texture coordinate.
+out vec4 vTexcoord;
+
+// Varrying output shadow texture coordinate.
+out vec4 vShadowCoordinate;
 
 void main()
 {
-	// DUMMY OUTPUT: directly assign input position to output position
-	gl_Position = aPosition;
+	// 3) Transform input position by model view matrix.
+	vViewPosition = uMV * aPosition;
+
+	// 9) Transform input normal by MV normal matrix.
+	vNormal = uMV_nrm * aNormal;
+
+	// Apply inbound texture coordinate and object atlas to texture coordinate outbound.
+	vTexcoord = uAtlas * aTexcoord;
+
+	// Calculate and pass shadow coordinate.
+	vShadowCoordinate = uMVPB_other * aPosition;
+
+	// Move view position into clip space and assign it to output position.
+	gl_Position = uP * vViewPosition;
 }

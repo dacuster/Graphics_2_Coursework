@@ -36,10 +36,10 @@
 **	FORWARD DECLARATIONS  **
 ***************************/
 // Diffuse calculation.
-float diffuse(vec4 _normal, vec4 _lightDirection);
+float diffuse(vec3 _normal, vec3 _lightDirection);
 
 // Specular calculation.
-float specular(vec4 _viewDirection, vec4 _reflectionDirection, float _specularStrength = 1.0, int _shininess = 4);
+float specular(vec3 _viewDirection, vec3 _reflectionDirection, float _specularStrength = 1.0, int _shininess = 4);
 
 // Ambient calculation.
 vec4 ambient(vec4 _lightColor, float _ambientStrength = 0.01);
@@ -96,34 +96,34 @@ in vec4 vNormal;
 void main()
 {
 	// Final diffuse.
-	vec4 finalDiffuse = vec4(0.0, 0.0, 0.0, 0.0);
+	vec3 finalDiffuse = vec3(0.0, 0.0, 0.0);
 
 	// Final specular.
-	vec4 finalSpecular = vec4(0.0, 0.0, 0.0, 0.0);
+	vec3 finalSpecular = vec3(0.0, 0.0, 0.0);
 
 	// Final ambient.
 	vec4 finalAmbient = vec4(0.0, 0.0, 0.0, 0.0);
 
 	// Calculate the view direction normal vector.
-	vec4 viewDirection = normalize(vViewPosition);
+	vec3 viewDirection = normalize(vViewPosition.xyz);
 
 	// Surface normal.
-	vec4 surfaceNormal = normalize(vNormal);
+	vec3 surfaceNormal = normalize(vNormal.xyz);
 	
 	// Loop through all the colors in the scene.
 	for (int count = 0; count < uLightCt; count++)
 	{
 		// Light direction as a normal vector. pL - p
-		vec4 lightDirection = normalize(uLightPos[count] - vViewPosition);
+		vec3 lightDirection = normalize(uLightPos[count].xyz - vViewPosition.xyz);
 
 		// Calculate the reflection direction.
-		vec4 reflectionDirection = reflect(lightDirection, surfaceNormal);
+		vec3 reflectionDirection = reflect(lightDirection, surfaceNormal);
 
 		// Sum up all diffuse lighting values scaled by light color.
-		finalDiffuse += diffuse(surfaceNormal, lightDirection) * uLightCol[count];
+		finalDiffuse += diffuse(surfaceNormal, lightDirection) * uLightCol[count].xyz;
 
 		// Sum up all the specular lighting values scaled by light color.
-		finalSpecular += specular(viewDirection, reflectionDirection) * uLightCol[count];
+		finalSpecular += specular(viewDirection, reflectionDirection) * uLightCol[count].xyz;
 
 		// Sum up all the ambient lighting values scaled by light color.
 		finalAmbient += ambient(uLightCol[count]);
@@ -131,7 +131,7 @@ void main()
 
 	// Assign texture and diffuse to outbound fragment color.
 	// Diffuse_map * finalDiffuse + ambient + Specular_map * finalSpecular
-	rtFragColor = texture(uTex_dm, vec2(vTexcoord)) * finalDiffuse + finalAmbient + texture(uTex_sm, vec2(vTexcoord)) * finalSpecular;
+	rtFragColor = texture(uTex_dm, vec2(vTexcoord)) * vec4(finalDiffuse, 1.0) + finalAmbient + texture(uTex_sm, vec2(vTexcoord)) * vec4(finalSpecular, 1.0);
 
 	rtViewPosition = vViewPosition;
 
@@ -143,13 +143,13 @@ void main()
 
 	rtSpecularMap = texture(uTex_sm, vec2(vTexcoord));
 
-	rtDiffuseTotal = vec4(finalDiffuse.xyz, 1.0);
+	rtDiffuseTotal = vec4(finalDiffuse, 1.0);
 
-	rtSpecularTotal = vec4(finalSpecular.xyz, 1.0);
+	rtSpecularTotal = vec4(finalSpecular, 1.0);
 }
 
 // Calculate diffuse value of given light and surface normal.
-float diffuse(vec4 _surfaceNormal, vec4 _lightDirection)
+float diffuse(vec3 _surfaceNormal, vec3 _lightDirection)
 {
 	// Make sure value is not less than 0 and return.
 	return max(0.0, dot(_lightDirection, _surfaceNormal));
@@ -158,7 +158,7 @@ float diffuse(vec4 _surfaceNormal, vec4 _lightDirection)
 // Calculate specular highlights.
 // Shininess is an exponential power of 2.
 // ks *= ks = ks^2 : ks *= ks = ks^4 : ks *= ks = ks^8 etc...
-float specular(vec4 _viewDirection, vec4 _reflectionDirection, float _specularStrength /*= 1.0*/, int _shininess /*= 4*/)
+float specular(vec3 _viewDirection, vec3 _reflectionDirection, float _specularStrength /*= 1.0*/, int _shininess /*= 4*/)
 {
 	// Calculate the initial specular coefficient with a minimum of 0.
 	float specularCoefficient = max(0.0, dot(_viewDirection, _reflectionDirection));

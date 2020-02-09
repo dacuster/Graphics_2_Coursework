@@ -125,7 +125,7 @@ void main()
 
 	// Assign texture and diffuse to outbound fragment color.
 	// Diffuse_map * finalDiffuse + ambient + Specular_map * finalSpecular
-	rtFragColor = texture(uTex_dm, vec2(vTexcoord)) * finalDiffuse + finalAmbient + texture(uTex_sm, vec2(vTexcoord)) * finalSpecular;
+	//rtFragColor = texture(uTex_dm, vec2(vTexcoord)) * finalDiffuse + finalAmbient + texture(uTex_sm, vec2(vTexcoord)) * finalSpecular;
 }
 
 // Calculate diffuse value of given light and surface normal.
