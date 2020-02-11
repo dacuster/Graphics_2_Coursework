@@ -33,6 +33,14 @@ uniform sampler2D uImage00;
 
 layout (location = 0) out vec4 rtFragColor;
 
+// (1)
+// Luminance from HLSL
+// Output to new MRT to see grayscale. (DEBUG)
+float relativeLuminance(vec3 _color)
+{
+	return(0.2126 * _color.r + 0.7152 * _color.g + 0.0722 * _color.b);
+}
+
 void main()
 {
 	// DUMMY OUTPUT: all fragments are OPAQUE CYAN
