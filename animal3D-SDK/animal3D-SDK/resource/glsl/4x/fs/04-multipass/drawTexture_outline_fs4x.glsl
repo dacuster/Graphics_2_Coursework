@@ -28,10 +28,37 @@
 //	0) copy existing texturing shader
 //	1) implement outline algorithm - see render code for uniform hints
 
-out vec4 rtFragColor;
+
+in vec4 vTexcoord;
+
+uniform sampler2D uTex_dm;
+
+// Lab 3
+// Locations in HUD!!!
+layout (location = 0) out vec4 rtFragColor;
+
+// Line color.
+uniform vec4 uColor;
+
+// Line thickness.
+uniform vec2 uAxis;
+
+// Actual pixel size.
+uniform vec2 uSize;
+
+in vec4 vNormal;
 
 void main()
 {
 	// DUMMY OUTPUT: all fragments are OPAQUE DARK GREY
-	rtFragColor = vec4(0.2, 0.2, 0.2, 1.0);
+	//rtFragColor = vec4(0.2, 0.2, 0.2, 1.0);
+
+	// Shadertoy example of quick outlining.
+	//rtFragColor -= rtFragColor - length(fwidth(texture(uTex_dm, vec2(vTexcoord)))) * 3.0;
+
+	rtFragColor = vec4(normalize(vNormal).xyz * 0.5 + 0.5, 1.0);
+	
+
+	// Render Target Fragment Color
+	//rtFragColor = sample_dm;
 }

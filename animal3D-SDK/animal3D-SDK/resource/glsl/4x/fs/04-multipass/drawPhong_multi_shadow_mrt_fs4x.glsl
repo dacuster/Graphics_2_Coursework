@@ -28,9 +28,9 @@
 // ****TO-DO: 
 //	--0) copy existing Phong shader
 //	--1) receive shadow coordinate
-//	2) perform perspective divide
+//	--2) perform perspective divide
 //	--3) declare shadow map texture
-//	4) perform shadow test
+//	--4) perform shadow test
 
 
 /***************************
@@ -56,8 +56,8 @@ layout (location = 0) out vec4 rtFragColor;
 layout (location = 1) out vec4 rtViewPosition;
 layout (location = 2) out vec4 rtViewNormal;
 layout (location = 3) out vec4 rtTexcoord;
-layout (location = 4) out vec4 rtDiffuseMap;
-layout (location = 5) out vec4 rtSpecularMap;
+layout (location = 4) out vec4 rtShadowCoord;
+layout (location = 5) out vec4 rtShadowTest;
 layout (location = 6) out vec4 rtDiffuseTotal;
 layout (location = 7) out vec4 rtSpecularTotal;
 
@@ -144,23 +144,21 @@ void main()
 
 	// Assign texture and diffuse to outbound fragment color.
 	// Diffuse_map * finalDiffuse + ambient + Specular_map * finalSpecular
-	rtFragColor = (texture(uTex_dm, vec2(vTexcoord)) * vec4(finalDiffuse, 1.0) + texture(uTex_dm, vTexcoord.xy) * finalAmbient + texture(uTex_sm, vec2(vTexcoord)) * vec4(finalSpecular, 1.0)) * vec4((1.0 - shadow), 1.0 - shadow, 1.0 - shadow, 1.0);
+	rtFragColor = (texture(uTex_dm, vec2(vTexcoord)) * vec4(finalDiffuse, 1.0) + texture(uTex_dm, vTexcoord.xy) * finalAmbient + texture(uTex_sm, vec2(vTexcoord)) * vec4(finalSpecular, 1.0)) * vec4(1.0 - shadow);//vec4((1.0 - shadow), 1.0 - shadow, 1.0 - shadow, 1.0);
 
-	//rtFragColor = texture(uTex_shadow, vec2(vShadowCoordinate));
+	rtViewPosition = vViewPosition;
 
-//	rtViewPosition = vViewPosition;
-//
-//	rtViewNormal = vec4(normalize(vNormal).xyz * 0.5 + 0.5, 1.0);
-//
-//	rtTexcoord = vTexcoord;
-//
-//	rtDiffuseMap = texture(uTex_dm, vec2(vTexcoord));
-//
-//	rtSpecularMap = texture(uTex_sm, vec2(vTexcoord));
-//
-//	rtDiffuseTotal = vec4(finalDiffuse, 1.0);
-//
-//	rtSpecularTotal = vec4(finalSpecular, 1.0);
+	rtViewNormal = vec4(normalize(vNormal).xyz * 0.5 + 0.5, 1.0);
+
+	rtTexcoord = vTexcoord;
+
+	rtShadowCoord = vShadowCoordinate;//texture(uTex_dm, vec2(vTexcoord));
+
+	rtShadowTest= vec4(1.0 - shadow);//texture(uTex_sm, vec2(vTexcoord));
+
+	rtDiffuseTotal = vec4(finalDiffuse, 1.0);
+
+	rtSpecularTotal = vec4(finalSpecular, 1.0);
 }
 
 // Calculate diffuse value of given light and surface normal.
@@ -198,9 +196,6 @@ float calculateShadow(vec4 shadowCoordinate)
 {
 	// Perspective divide.
 	vec3 projectorCoordinates = shadowCoordinate.xyz / shadowCoordinate.w;
-
-	// Transform to [0,1] range.
-	projectorCoordinates *= 0.5 + 0.5;
 
 	// Get the closest depth value.
 	float closestDepth = texture(uTex_shadow, projectorCoordinates.xy).r;
