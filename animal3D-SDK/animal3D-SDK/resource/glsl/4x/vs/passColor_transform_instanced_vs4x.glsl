@@ -27,9 +27,21 @@
 
 #define MAX_INSTANCES 1024
 
+/*
+	Attribute input variable for position.
+	Use layout location 0 for position data.
+*/
 layout (location = 0) in vec4 aPosition;
+layout (location = 3) in vec4 aColor;
+
+uniform mat4 uMVP;
+
+out vec4 vColor;
 
 void main()
 {
-	gl_Position = aPosition;
+	// DUMMY OUTPUT: directly assign input position to output position
+	gl_Position = uMVP * aPosition;
+
+	vColor = aColor;
 }

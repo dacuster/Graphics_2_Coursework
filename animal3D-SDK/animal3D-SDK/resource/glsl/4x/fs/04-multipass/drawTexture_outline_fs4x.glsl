@@ -33,6 +33,14 @@ vec4 sobel(sampler2D _image, vec2 _center);
 in vec4 vTexcoord;
 
 uniform sampler2D uTex_dm;
+uniform sampler2D uTex_sm;
+
+uniform sampler2D uTex_nm;
+uniform sampler2D uTex_hm;
+uniform sampler2D uTex_dm_ramp;
+uniform sampler2D uTex_sm_ramp;
+uniform sampler2D uTex_shadow;
+uniform sampler2D uTex_proj;
 
 // Lab 3
 // Locations in HUD!!!
@@ -57,7 +65,22 @@ void main()
 	//rtFragColor = vec4(0.2, 0.2, 0.2, 1.0);
 
 	// Shadertoy example of quick outlining.
-	//rtFragColor -= rtFragColor - length(fwidth(texture(uTex_dm, vec2(vTexcoord)))) * 10.0;
+//	rtFragColor -= rtFragColor - length(fwidth(texture(uTex_nm, vec2(vTexcoord)))) * 2000.0;
+//
+//	//rtFragColor = vec4(1.0 - rtFragColor.rgb, 1.0);
+//
+//	//rtFragColor *= 0.5 + 0.5;
+//
+//	if (rtFragColor.r * rtFragColor.g * rtFragColor.b / 3.0 > 0.01)
+//	{
+//		rtFragColor = vec4(0.0, 0.0, 0.0, 1.0);
+//	}
+//	else
+//	{
+//		rtFragColor = texture(uTex_dm, vTexcoord.xy);
+//	}
+
+rtFragColor = texture(uTex_, vTexcoord.xy);
 
 	//rtFragColor = vec4(normalize(vNormal).xyz * 0.5 + 0.5, 1.0);
 	
@@ -67,42 +90,42 @@ void main()
 
 	//rtFragColor = vec4(vec3(sobel(vNormal.xy)), 1.0);
 
-	float edgeDetection = (dot(vViewPosition.xyz, normalize(vNormal).xyz * 0.5 + 0.5) > 0.3 ? 1.0 : 0.0);
+	//float edgeDetection = (dot(vViewPosition.xyz, normalize(vNormal).xyz * 0.5 + 0.5) > 0.3 ? 1.0 : 0.0);
 
 	//rtFragColor = vec4(edgeDetection, edgeDetection, edgeDetection, 1.0);
 
-	rtFragColor = vec4(sobel(uTex_dm, vTexcoord.xy).rgb, texture(uTex_dm, vTexcoord.xy).a);
-	rtFragColor = sobel(uTex_dm, vTexcoord.xy);
-
+	//rtFragColor = sobel(uTex_dm, vTexcoord.xy);
+	//rtFragColor = sobel(uTex_dm, vTexcoord.xy);
 
 }
 
 vec4 sobel(sampler2D _image, vec2 _center)
 {
-	vec4 horizontal = texture(_image, _center);
-	vec4 vertical = horizontal;
+	float horizontal = texture(_image, _center).a;
+	float vertical = horizontal;
 	
-	horizontal -= texture(_image, _center + vec2(-1, 1));
-	horizontal -= texture(_image, _center + vec2(-1, 0)) * 2.0;
-	horizontal -= texture(_image, _center + vec2(-1, -1));
-	horizontal += texture(_image, _center + vec2(1, 1));
-	horizontal += texture(_image, _center + vec2(1, 0)) * 2.0;
-	horizontal += texture(_image, _center + vec2(1, -1));
+	horizontal += texture(_image, _center + vec2(-1, 1)).a;
+	horizontal += texture(_image, _center + vec2(-1, 0)).a  * 2.0;
+	horizontal += texture(_image, _center + vec2(-1, -1)).a;
+	horizontal += texture(_image, _center + vec2(1, 1)).a;
+	horizontal += texture(_image, _center + vec2(1, 0)).a * 2.0;
+	horizontal += texture(_image, _center + vec2(1, -1)).a;
 	horizontal /= 6.0;
 
-	vertical += texture(_image, _center + vec2(-1, 1));
-	vertical += texture(_image, _center + vec2(0, 1)) * 2.0;
-	vertical += texture(_image, _center + vec2(1, 1));
-	vertical -= texture(_image, _center + vec2(-1, -1));
-	vertical -= texture(_image, _center + vec2(0, -1)) * 2.0;
-	vertical -= texture(_image, _center + vec2(1, -1));
+	vertical += texture(_image, _center + vec2(-1, 1)).a;
+	vertical += texture(_image, _center + vec2(0, 1)).a * 2.0;
+	vertical += texture(_image, _center + vec2(1, 1)).a;
+	vertical += texture(_image, _center + vec2(-1, -1)).a;
+	vertical += texture(_image, _center + vec2(0, -1)).a * 2.0;
+	vertical += texture(_image, _center + vec2(1, -1)).a;
 	vertical /= 6.0;
 	
 	//vec3 edge = sqrt(horizontal.rgb * horizontal.rgb + vertical.rgb * vertical.rgb);
-	vec4 edge = sqrt(horizontal * horizontal + vertical * vertical);
+	float edge = sqrt(horizontal * horizontal + vertical * vertical);
 
 //	return vec4(edge, 1.0);
-	return edge;
+	//return edge;
+	return vec4(texture(_image, _center).rgb, edge);
 }
 
 

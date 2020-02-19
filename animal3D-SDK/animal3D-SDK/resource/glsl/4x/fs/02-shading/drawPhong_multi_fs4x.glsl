@@ -39,10 +39,10 @@
 float diffuse(vec4 _normal, vec4 _lightDirection);
 
 // Specular calculation.
-float specular(vec4 _viewDirection, vec4 _reflectionDirection, float _specularStrength = 1.0, int _shininess = 4);
+float specular(vec4 _viewDirection, vec4 _reflectionDirection, float _specularStrength, int _shininess);
 
 // Ambient calculation.
-vec4 ambient(vec4 _lightColor, float _ambientStrength = 0.01);
+vec4 ambient(vec4 _lightColor, float _ambientStrength);
 
 
 /**************
@@ -117,10 +117,10 @@ void main()
 		finalDiffuse += diffuse(surfaceNormal, lightDirection) * uLightCol[count];
 
 		// Sum up all the specular lighting values scaled by light color.
-		finalSpecular += specular(viewDirection, reflectionDirection) * uLightCol[count];
+		finalSpecular += specular(viewDirection, reflectionDirection, 1.0, 4) * uLightCol[count];
 
 		// Sum up all the ambient lighting values scaled by light color.
-		finalAmbient += ambient(uLightCol[count]);
+		finalAmbient += ambient(uLightCol[count], 0.001);
 	}
 
 	// Assign texture and diffuse to outbound fragment color.
