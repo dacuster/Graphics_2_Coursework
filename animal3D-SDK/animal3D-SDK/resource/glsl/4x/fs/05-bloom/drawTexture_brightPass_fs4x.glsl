@@ -31,7 +31,10 @@
 
 uniform sampler2D uImage00;
 
+in vec4 vTexcoord;
+
 layout (location = 0) out vec4 rtFragColor;
+layout (location = 1) out vec4 rtLuminance;
 
 // (1)
 // Luminance from HLSL
@@ -44,5 +47,10 @@ float relativeLuminance(vec3 _color)
 void main()
 {
 	// DUMMY OUTPUT: all fragments are OPAQUE CYAN
-	rtFragColor = vec4(0.0, 1.0, 1.0, 1.0);
+	//rtFragColor = vec4(0.0, 1.0, 1.0, 1.0);
+	vec4 image = texture(uImage00, vTexcoord.xy);
+	vec3 color = image.rgb * 0.5 * relativeLuminance(image.rgb);
+
+	rtLuminance = vec4(relativeLuminance(image.rgb));
+	rtFragColor = vec4(color , 1.0);
 }

@@ -80,7 +80,7 @@ void main()
 //		rtFragColor = texture(uTex_dm, vTexcoord.xy);
 //	}
 
-rtFragColor = texture(uTex_, vTexcoord.xy);
+//rtFragColor = texture(uTex_, vTexcoord.xy);
 
 	//rtFragColor = vec4(normalize(vNormal).xyz * 0.5 + 0.5, 1.0);
 	
