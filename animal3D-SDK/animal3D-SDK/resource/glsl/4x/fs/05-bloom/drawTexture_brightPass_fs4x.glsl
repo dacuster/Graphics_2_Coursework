@@ -36,12 +36,48 @@ in vec4 vTexcoord;
 layout (location = 0) out vec4 rtFragColor;
 layout (location = 1) out vec4 rtLuminance;
 
-// (1)
-// Luminance from HLSL
-// Output to new MRT to see grayscale. (DEBUG)
-float relativeLuminance(vec3 _color)
+// Functions for simple math for luminance formulas.
+float firstMethod(float _color)
 {
-	return(0.2126 * _color.r + 0.7152 * _color.g + 0.0722 * _color.b);
+	return pow(((_color + 0.055) / 1.055), 2.4);
+}
+
+float secondMethod(float _color)
+{
+	return _color / 12.92;
+}
+
+// (1)
+// Output to new MRT to see grayscale. (DEBUG)
+float relativeLuminance(vec3 _color, bool simple)
+{
+	// Luminance from HLSL
+	if (simple)
+	{
+		return(0.2126 * _color.r + 0.7152 * _color.g + 0.0722 * _color.b);
+	}
+
+	// WCAG method of luminance.
+	float r = firstMethod(_color.r);
+	float g = firstMethod(_color.g);
+	float b = firstMethod(_color.b);
+
+	if (_color.r <= 0.03928)
+	{
+		r = secondMethod(_color.r);
+	}
+
+	if (_color.g <= 0.03928)
+	{
+		g = secondMethod(_color.g);
+	}
+
+	if (_color.b <= 0.03928)
+	{
+		b = secondMethod(_color.b);
+	}
+	
+	return(0.2126 * r + 0.7152 * g + 0.0722 * b);
 }
 
 void main()
@@ -49,8 +85,8 @@ void main()
 	// DUMMY OUTPUT: all fragments are OPAQUE CYAN
 	//rtFragColor = vec4(0.0, 1.0, 1.0, 1.0);
 	vec4 image = texture(uImage00, vTexcoord.xy);
-	vec3 color = image.rgb * 0.5 * relativeLuminance(image.rgb);
+	vec3 color = image.rgb * relativeLuminance(image.rgb, false);
 
-	rtLuminance = vec4(relativeLuminance(image.rgb));
+	rtLuminance = vec4(relativeLuminance(image.rgb, true));
 	rtFragColor = vec4(color , 1.0);
 }
