@@ -46,6 +46,8 @@ void main()
 	vViewPosition = uMV * aPosition;
 	vViewNormal = uMV_nrm * aNormal;
 	vTexcoord = uAtlas * aTexcoord;
+	// Perspective divide
+	// Go backwards: perspective multiply or reverse perspective divide
 	vBiasedClipCoord = uPB * vViewPosition;
 	gl_Position = uP * vViewPosition;
 }
