@@ -31,6 +31,9 @@
 //	3) sample texture using Gaussian blur function and output result
 
 uniform sampler2D uImage00;
+uniform vec2 uAxis;
+uniform vec2 uSize;
+in vec4 vTexcoord;
 
 layout (location = 0) out vec4 rtFragColor;
 
@@ -49,9 +52,22 @@ vec4 blurGaussian2(in sampler2D _image, in vec2 _center, in vec2 _direction)
 	return _color * 0.25;	// Normalize by the sample size. 2, 1, 1
 }
 
+vec4 blurGaussian4(in sampler2D _image, in vec2 _center, in vec2 _direction)
+{
+	vec4 _color = vec4(0.0);
+	_color += texture(_image, _center) * 6.0;
+	_color += texture(_image, _center + _direction * 4.0);
+	_color += texture(_image, _center - _direction * 4.0);
+	_color += texture(_image, _center + _direction);
+	_color += texture(_image, _center - _direction);
+	// return _color / 16.0;
+	return _color * 0.0625;	// Normalize by the sample size. 6, 4, 4, 1, 1
+}
+
 
 void main()
 {
 	// DUMMY OUTPUT: all fragments are OPAQUE MAGENTA
-	rtFragColor = vec4(1.0, 0.0, 1.0, 1.0);
+	//rtFragColor = vec4(1.0, 0.0, 1.0, 1.0);
+	rtFragColor = blurGaussian2(uImage00, vTexcoord.xy, uAxis);
 }
