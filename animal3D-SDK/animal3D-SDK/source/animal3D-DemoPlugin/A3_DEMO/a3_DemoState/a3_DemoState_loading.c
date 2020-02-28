@@ -711,6 +711,7 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTangentBasis_transform_instanced_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawOverlays_tangents_wireframe_gs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawColorAttrib_fs->shader);
+	// curves
 	currentDemoProg = demoState->prog_drawCurveSegment;
 	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-curve-segment");
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passthru_vs->shader);
