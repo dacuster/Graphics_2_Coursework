@@ -55,9 +55,13 @@ vec4 calculateAmbient(vec4 _lightColor, float _ambientStrength);
 /*************
 **  INPUTS  **
 *************/
-in vec4 vTexcoord;		// Texture coordinate.
-in vec4 vViewPosition;	// View position.
-in vec4 vNormal;		// Normal.
+in vbLightingData
+{
+	vec4 vViewPosition;
+	vec4 vViewNormal;
+	vec4 vTexcoord;
+	vec4 vBiasedClipCoord;
+};
 
 
 /**************
@@ -73,31 +77,45 @@ layout (location = 7) out vec4 rtSpecularLightTotal;	// Total specular lighting.
 /***************
 **  UNIFORMS  **
 ***************/
-uniform sampler2D uTex_dm;	// Diffuse map texture.
-uniform sampler2D uTex_sm;	// Specular map texture.
+uniform sampler2D uImage01;
+uniform sampler2D uImage02;
+uniform sampler2D uImage03;
+uniform sampler2D uImage04;
+uniform sampler2D uImage05;
 
 uniform int uLightCt;		// Light count.
 
 uniform vec4 uLightPos[4];	// Light positions.
 uniform vec4 uLightCol[4];	// Light colors.
 
+uniform mat4 uPB_inv;
+
 void main()
 {
-	vec4 diffuse  = vec4(0.0, 0.0, 0.0, 0.0);	// Diffuse lighting.
+	vec4 gPosition = texture(uImage01, vTexcoord.xy);
+	vec4 gNormal = texture(uImage02, vTexcoord.xy);
+	vec4 gTexcoord = texture(uImage03, vTexcoord.xy);
+//	vec4 diffuseTexture  = texture(uImage04, vTexcoord.xy);	// Diffuse lighting.
+//	vec4 specularTexture = texture(uImage04, vTexcoord.xy);	// Specular lighting.
+	vec4 diffuse = vec4(0.0, 0.0, 0.0, 0.0);	// Diffuse lighting.
 	vec4 specular = vec4(0.0, 0.0, 0.0, 0.0);	// Specular lighting.
-	vec4 ambient  = vec4(0.0, 0.0, 0.0, 0.0);	// Ambient lighting.
+	vec4 ambient  = vec4(0.0, 0.0, 0.0, 0.0);			// Ambient lighting.
+
+	// Reverse perspective divide.
+	gPosition *= uPB_inv;
+	gPosition /= gPosition.w;
 
 	// Calculate the view direction normal vector.
-	vec4 viewDirection = normalize(vViewPosition);
+	vec4 viewDirection = normalize(gPosition);
 
 	// Surface normal.
-	vec4 surfaceNormal = normalize(vNormal);
+	vec4 surfaceNormal = normalize(gNormal);
 
 	// Loop through each light in the scene.
 	for (int lightIndex = 0; lightIndex < uLightCt; lightIndex++)
 	{
 		// Light direction as a normal vector.
-		vec4 lightDirection = normalize(uLightPos[lightIndex] - vViewPosition);
+		vec4 lightDirection = normalize(uLightPos[lightIndex] - gPosition);//vViewPosition);
 
 		// Calculate the reflection direction.
 		vec4 reflectionDirection = reflect(lightDirection, surfaceNormal);
@@ -112,12 +130,12 @@ void main()
 		ambient += calculateAmbient(uLightCol[lightIndex], 0.001);
 	}
 
-	// Get the diffuse and specular textures.
-	vec4 diffuseTexture = texture(uTex_dm, vTexcoord.xy);
-	vec4 specularTexture = texture(uTex_sm, vTexcoord.xy);
+	vec4 diffuseTexture  = texture(uImage04, vTexcoord.xy);	// Diffuse lighting.
+	vec4 specularTexture = texture(uImage04, vTexcoord.xy);	// Specular lighting.
 
 	// DUMMY OUTPUT: all fragments are OPAQUE CYAN (and others)
-	rtFragColor = diffuseTexture * diffuse + specularTexture * specular + ambient;
+	//rtFragColor = diffuseTexture * diffuse + specularTexture * specular + ambient;
+	rtFragColor = vec4(0.0, 0.0, 0.0, 1.0);
 	rtDiffuseMapSample = vec4(0.0, 0.0, 1.0, 1.0);
 	rtSpecularMapSample = vec4(0.0, 1.0, 0.0, 1.0);
 	rtDiffuseLightTotal = vec4(1.0, 0.0, 1.0, 1.0);

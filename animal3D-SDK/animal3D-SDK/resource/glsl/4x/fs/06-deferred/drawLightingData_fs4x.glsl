@@ -34,7 +34,8 @@ layout (location = 1) out vec4 rtViewPosition;
 layout (location = 2) out vec4 rtViewNormal;
 layout (location = 3) out vec4 rtAtlasTexcoord;
 
-in vbLightingData {
+in vbLightingData
+{
 	vec4 vViewPosition;
 	vec4 vViewNormal;
 	vec4 vTexcoord;
@@ -45,6 +46,6 @@ void main()
 {
 	// DUMMY OUTPUT: all fragments are OPAQUE RED, GREEN AND BLUE
 	rtViewPosition = vViewPosition;
-	rtViewNormal = normalize(vViewNormal);
+	rtViewNormal = vec4(normalize(vViewNormal).rgb * 0.5 + 0.5, 1.0);
 	rtAtlasTexcoord = vTexcoord;
 }
